@@ -1,4 +1,4 @@
 # Package
 bin           = @["main"]
 # Dependencies
-requires "nim, jester"
+requires "nim<=0.5.0, jester"

@@ -1,0 +1,5 @@
+2022-02-25T19:10:42 INFO Jester is making jokes at http://127.0.0.1:5000 (all interfaces)
+2022-02-25T19:11:07 DEBUG GET /
+2022-02-25T19:11:07 DEBUG   200 OK {"content-type": @["text/html;charset=utf-8"]}
+2022-02-25T19:11:07 DEBUG GET /favicon.ico
+2022-02-25T19:11:07 DEBUG   404 Not Found {"content-type": @["text/html;charset=utf-8"]}

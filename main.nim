@@ -1,14 +1,15 @@
+#[
+  main
+    - rounting
+    - logging
+]#
 import jester, posix, json, logging, os, strutils, asyncdispatch
 import htmlgen as h
 
-onSignal(SIGABRT):
-  echo "<2>Received SIGABRT"
-  quit(1)
 
-let
-  fl   = newFileLogger("logs.log",
-                       fmtStr = "$datetime $levelname ")
-addHandler(fl)
+# logging
+
+let fl = newFileLogger("logs.log", fmtStr="$datetime $levelname ")
 
 proc log_debug(args: varargs[string, `$`]) =
   debug args
@@ -17,6 +18,15 @@ proc log_debug(args: varargs[string, `$`]) =
 proc log_info(args: varargs[string, `$`]) =
   info args
   fl.file.flushFile()
+
+onSignal(SIGABRT):
+  echo "<2>Received SIGABRT"
+  quit(1)
+
+fl.addHandler
+
+
+# rounting
 
 var settings = newSettings()
 if existsEnv("PORT"):

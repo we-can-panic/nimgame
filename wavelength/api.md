@@ -212,7 +212,7 @@ sequenceDiagram
   S ->> B: 
   S ->> A: 
   S ->> B: Range
-  Note over A, S: host(B)が単語を共有、ディスカッションで目盛りを調整
+  Note over A, S: 親(B)が単語を共有、ディスカッションで目盛りを調整
   Note over A, S: 調整
   A ->> S: Dial
   S ->> C: Dial

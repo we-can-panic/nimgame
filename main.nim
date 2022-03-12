@@ -25,6 +25,8 @@ if existsEnv("PORT"):
 routes:
   get "/":
     resp h.h1("Hello myservice!!!")
+  get "/wavelength":
+    resp "<html><head></head><body>hello</body></html>"
 
 when isMainModule:
   log_info "starting"

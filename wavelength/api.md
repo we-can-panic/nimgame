@@ -31,6 +31,14 @@ WebSocketを使い、クライアント・サーバ間で情報の共有を行�
 | type | "Join" | Y | identifier of 'Join' |
 | name | string | Y | user's name |
 
+example
+```
+{
+  "type": "Join",
+  "name": "Bob"
+}
+```
+
 ### Status
 ユーザのステータスを共有  
 - Standby: 準備中  

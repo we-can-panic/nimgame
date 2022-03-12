@@ -124,6 +124,15 @@ example
 }
 ```
 
+### Theme
+hostにお題を共有
+
+| key | value | required | comment |
+|--|--|--|--|
+| type | "Theme" | Y | identifier of 'Theme' |
+| theme1 | string | Y | theme 1 |
+| theme2 | string | Y | theme 2 |
+
 ### Dial
 dialの変更を共有
 
@@ -212,6 +221,7 @@ sequenceDiagram
   S ->> B: 
   S ->> A: 
   S ->> B: Range
+  S ->> B: Theme
   Note over A, S: 親(B)が単語を共有、ディスカッションで目盛りを調整
   Note over A, S: 調整
   A ->> S: Dial

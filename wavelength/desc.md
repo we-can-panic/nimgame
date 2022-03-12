@@ -4,7 +4,7 @@
 ## ゲームルール
 https://boku-boardgame.net/wavelength
 
-- 少人数（3~5人）で遊べるように、↑の①~⑤, ⑦をプレイ
+- 少人数（3～5人）で遊べるように、↑の①～⑤, ⑦をプレイ
   - 親が単語を言い、他のプレイヤーが数値を予測するまで
 
 1. プレイヤーの中から「親」を決定
@@ -39,6 +39,7 @@ sequenceDiagram
       + Range: ref object
       + Dial: range[1..100]
   + /front --> 適当な単位でxxutils.nimに切り分け
+    + index.html
     + .canvasutils.nim --> 描画（切り分け例
     + .front.nim --> 画面遷移/通信/演出
   + /back --> 適当な単位でxxutils.nimに切り分け

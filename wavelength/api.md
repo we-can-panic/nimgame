@@ -92,6 +92,7 @@ example
       "status": "Standby"
     }
   ]
+}
 ```
 
 ### Host
@@ -193,7 +194,7 @@ sequenceDiagram
   S ->> C: Users
   S ->> B: 
   S ->> A: 
-  Note over S: startを受信するたびに、全てのクライアントに(ry
+  Note over S: startを受信するたびに、全てのクライアントにusersの情報を共有
   B ->> S: Start
   S ->> C: Users
   S ->> B: 

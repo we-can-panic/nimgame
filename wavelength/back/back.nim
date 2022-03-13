@@ -103,7 +103,8 @@ proc exportUsers(): seq[JsonNode] =
     if user.conn.readyState == Open:
       result.add( %* {
         "name": user.name,
-        "status": $user.status
+        "status": $user.status,
+        "id": user.key
       })
 
 proc send(user: WSUser, msg: string) =

@@ -30,6 +30,7 @@ type
     Game
 
   User* = ref object of RootObj
+    id*: string
     name*: string
     status*: UserStatus
     room*: Room

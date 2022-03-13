@@ -11,7 +11,6 @@ import ../core/core
 type
   # 接続中のユーザー
   WSUser = ref object of User
-    key: string
     conn: WebSocket
 
 var currentUsers {.threadvar.} : seq[WSUser]
@@ -86,12 +85,12 @@ proc onRequest* (request: Request) {.async.} =
 proc newUser(ws: WebSocket): WSUser =
   ## create new user from websocket
   result = WSUser()
-  result.key = ws.key
+  result.id = ws.key
   result.conn = ws
 
 proc isExists(user: WSUser): bool =
   ## judge `currentUsers` is including this user
-  result = currentUsers.mapIt(it.key).contains(user.key)
+  result = currentUsers.mapIt(it.id).contains(user.id)
 
 proc regist(user: WSUser) =
   ## join user to `currentUsers`
@@ -104,7 +103,7 @@ proc exportUsers(): seq[JsonNode] =
       result.add( %* {
         "name": user.name,
         "status": $user.status,
-        "id": user.key
+        "id": user.id
       })
 
 proc send(user: WSUser, msg: string) =

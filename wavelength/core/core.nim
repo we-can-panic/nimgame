@@ -2,6 +2,8 @@
   front/backの共通type/処理
 ]#
 
+import json
+
 type
   ApiSend* = enum
     Join
@@ -27,7 +29,7 @@ type
     Wait
     Game
 
-  User* = ref object
+  User* = ref object of RootObj
     name*: string
     status*: UserStatus
     room*: Room
@@ -51,3 +53,11 @@ proc newUser* (name: string, status=Standby, room=Wait): User =
   result.name = name
   result.status = status
   result.room = room
+
+proc parsePacket* (pkt: string): (bool, JsonNode) =
+  try:
+    result[0] = true
+    result[1] = parseJson(pkt)
+  except JsonParsingError:
+    result[0] = false
+    result[1] = %* {}

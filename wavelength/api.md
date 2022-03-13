@@ -77,6 +77,7 @@ example
 | users | [{...}, {...}, ...] | Y | current users |
 | users.name | string | Y | users name (including myself) |
 | users.status | Standby \| Active | Y | status<br>- standby: 待機中<br>- active: 準備OK |
+| users.id | string | Y | identifier of user |
 
 example
 ```
@@ -85,11 +86,13 @@ example
   "users": [
     {
       "name": "A",
-      "status": "Active"
+      "status": "Active",
+      "id": "xO6wR/R8GtlVr/C40qcQbg=="
     },
     {
       "name": "B",
-      "status": "Standby"
+      "status": "Standby",
+      "id": "y23lp/asdFRRR/asoidnuI=="
     }
   ]
 }

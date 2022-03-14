@@ -17,7 +17,9 @@ routes:
   get "/":
     resp "<h1>Hello myservice!!!</h1>"
   get "/wavelength":
-    resp "<html><head></head><body>hello</body></html>"
+    resp open("./wavelength/front/index.html").readAll()
+  get "/wavelength/front/index.js":
+    resp open("./wavelength/front/index.js").readAll()
   get "/wavelength/ws":
     await wl.onRequest(request)
     resp "WebSocket Only"

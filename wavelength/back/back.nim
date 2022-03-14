@@ -45,6 +45,8 @@ proc onRequest* (request: Request) {.async.} =
         logInfo "jsonparseError"
         continue
 
+      logInfo "GOT ", $query
+
       if not query.hasKey("type"):
         loginfo "Invalid api format: " & $query
         continue

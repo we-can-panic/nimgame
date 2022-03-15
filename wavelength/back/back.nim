@@ -60,7 +60,7 @@ proc onRequest* (request: Request) {.async.} =
         let
           userlist = exportUsers()
           usersquery = %* {
-            "type": "",
+            "type": $Users,
             "users": userlist
           }
         sendAll($usersquery)

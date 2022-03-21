@@ -64,7 +64,8 @@ proc onRequest* (request: Request) {.async.} =
             "users": userlist
           }
         sendAll($usersquery)
-
+      of Id:
+        discard
       of Status:
         discard
       of Dial1:

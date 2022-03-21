@@ -35,6 +35,8 @@ ws.onmessage = proc(ev: MessageEvent) =
   case apiType:
   of Users:
     discard
+  of Id2:
+    discard
   of Host:
     discard
   of Range1:

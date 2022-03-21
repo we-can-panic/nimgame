@@ -66,7 +66,7 @@ proc onRequest* (request: Request) {.async.} =
         sendAll($usersquery)
       of Id:
         let usersquery = %* {
-          "type": $Id,
+          "type": $Id2,
           "id": user.id
         }
         user.send($usersquery)

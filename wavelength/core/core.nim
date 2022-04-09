@@ -74,7 +74,7 @@ type
       score range example:
         |--0--|--1--|--2--|--3--|--4--|--3--|--2--|--1--|--0--|
     ]##
-    pt1*, pt2*, pt3*, pt4*: array[0..1, Dial]
+    pt1, pt2, pt3, pt4: array[0..1, Dial]
 
   Dial* = range[1..100]
     ##[

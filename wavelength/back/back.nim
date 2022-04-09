@@ -64,7 +64,12 @@ proc onRequest* (request: Request) {.async.} =
             "users": userlist
           }
         sendAll($usersquery)
-
+      of Id:
+        let usersquery = %* {
+          "type": $Id2,
+          "id": user.id
+        }
+        user.send($usersquery)
       of Status:
         discard
       of Dial1:

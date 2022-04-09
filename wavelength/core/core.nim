@@ -9,12 +9,14 @@ randomize()
 type
   ApiSend* = enum
     Join
+    Id
     Status
     Dial1 = "Dial"
     Dialed
 
   ApiReceive* = enum
     Users
+    Id2 = "Id"
     Host
     Range1 = "Range"
     Theme

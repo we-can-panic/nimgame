@@ -39,6 +39,12 @@ example
 }
 ```
 
+### Id
+自身のIDをリクエスト
+| key | value | required | comment |
+|--|--|--|--|
+| type | "Id" | Y | identifier of 'Id' |
+
 ### Status
 ユーザのステータスを共有  
 - Standby: 準備中  
@@ -68,6 +74,14 @@ example
 
 ## receive
 サーバ→クライアント
+
+### Id
+ユーザのIdを共有
+| key | value | required | comment |
+|--|--|--|--|
+| type | "Id" | Y | identifier of 'Id' |
+| id | string | Y | user's Id |
+
 
 ### Users
 現在接続しているプレイヤーをクライアントに共有

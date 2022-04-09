@@ -59,9 +59,6 @@ proc newUser* (name: string, status=Standby, room=Wait): User =
   result.status = status
   result.room = room
 
-proc newRange(pt1, pt2, pt3, pt4: array[0..1, int]): Range =
-  result = Range()
-
 proc newDial(n: int): Dial =
   result = 
     if n in 1..100: n

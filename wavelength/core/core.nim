@@ -1,6 +1,6 @@
-#[
+##[
   front/backの共通type/処理
-]#
+]##
 
 import json, random
 
@@ -8,6 +8,9 @@ randomize()
 
 type
   ApiSend* = enum
+    ##[
+      Kind of API for send from client (Front -> Back)
+    ]##
     Join
     Id
     Status
@@ -15,6 +18,9 @@ type
     Dialed
 
   ApiReceive* = enum
+    ##[
+      Kind of API for send from server (Back -> Send)
+    ]##
     Users
     Id2 = "Id"
     Host
@@ -25,55 +31,87 @@ type
     End
 
   UserStatus* = enum
+    ##[
+      Kind of user's status for game start
+      - Standby: 例えば、ユーザがそろっていない場合など
+      - Active: 全ユーザーがこのステータスになったらゲーム開始
+    ]##
     Standby
     Active
 
   Room* = enum
+    ##[
+      Kind of room that user in
+      - Login: 名前決めなど
+      - Wait: 他のユーザの待機中（Standby）
+      - Game: ゲーム中
+    ]##
     Login
     Wait
     Game
 
   User* = ref object of RootObj
+    ##[
+      user object
+      - id: user's identifier
+      - name: user's displayname
+      - status: refer to `UserStatus`
+      - room: refer to `Room`
+    ]##
     id*: string
     name*: string
     status*: UserStatus
     room*: Room
 
   Range* = ref object
+    ##[
+      range object to calculate score
+      - pt1: if pt1[0] < dial < pt1[1] : score is 1
+      - pt2: if pt2[0] < dial < pt2[1] : score is 2 (pliority over pt1)
+      - pt3: if pt3[0] < dial < pt3[1] : score is 3 (pliority over pt2)
+      - pt4: if pt4[0] < dial < pt4[1] : score is 4 (pliority over pt3)
+      
+      score range example:
+        |--0--|--1--|--2--|--3--|--4--|--3--|--2--|--1--|--0--|
+    ]##
     pt1*, pt2*, pt3*, pt4*: array[0..1, Dial]
 
   Dial* = range[1..100]
+    ##[
+      range of dial ( dial is the value 1..100 that users adjustsed )
+    ]##
 
 
 proc newUser* (name: string, status=Standby, room=Wait): User
-##[
-  generate new User object
-]##
+  ##[
+    generate new User object
+  ]##
 
 proc generateRange* (): Range
-##[
-  generate new Range object by suitable value
-]##
+  ##[
+    generate new Range object by suitable value
+  ]##
 
 proc newDial(n: int): Dial
-##[
-  generate new Dial object from int
-]##
+  ##[
+    generate new Dial object from int
+  ]##
+
 proc newDial[I, int](s: array[I, int]): array[I, Dial]
-##[
-  generate new Dial object from array[int] (for `generateRange`)
-]##
+  ##[
+    generate new Dial object from array[int] (for `generateRange`)
+  ]##
 
 proc calc* (r: Range, d: Dial): int
-##[
-  get score of Dial from Range
-]##
+  ##[
+    get score of Dial from Range
+  ]##
 
 proc parsePacket* (pkt: string): (bool, JsonNode)
-##[
-  parse websocket message
-  ApiSend / ApiReceive are usable this proc
-]##
+  ##[
+    parse websocket message
+    ApiSend / ApiReceive are usable this proc
+  ]##
 
 
 proc calc* (r: Range, d: Dial): int =

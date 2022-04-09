@@ -2,7 +2,9 @@
   front/backの共通type/処理
 ]#
 
-import json
+import json, random
+
+randomize()
 
 type
   ApiSend* = enum
@@ -36,7 +38,7 @@ type
     room*: Room
 
   Range* = ref object
-    pt1, pt2, pt3, pt4: array[0..1, 1..100]
+    pt1*, pt2*, pt3*, pt4*: array[0..1, Dial]
 
   Dial* = range[1..100]
 
@@ -54,6 +56,28 @@ proc newUser* (name: string, status=Standby, room=Wait): User =
   result.name = name
   result.status = status
   result.room = room
+
+proc newRange(pt1, pt2, pt3, pt4: array[0..1, int]): Range =
+  result = Range()
+
+proc newDial(n: int): Dial =
+  result = 
+    if n in 1..100: n
+    elif n<1: 1
+    else: 100
+
+proc newDial[I, int](s: array[I, int]): array[I, Dial] =
+  for i in s.low..s.high:
+    result[i] = newDial(s[i])
+
+proc generateRange* (): Range =
+  let
+    ini = rand(1..100)
+    pt1 = [ini, ini+5]
+    pt2 = [ini-5, ini+10]
+    pt3 = [ini-10, ini+15]
+    pt4 = [ini-15, ini+20]
+  result = Range(pt1: newDial(pt1), pt2: newDial(pt2), pt3: newDial(pt3), pt4: newDial(pt4))
 
 proc parsePacket* (pkt: string): (bool, JsonNode) =
   try:

@@ -45,6 +45,37 @@ type
   Dial* = range[1..100]
 
 
+proc newUser* (name: string, status=Standby, room=Wait): User
+##[
+  generate new User object
+]##
+
+proc generateRange* (): Range
+##[
+  generate new Range object by suitable value
+]##
+
+proc newDial(n: int): Dial
+##[
+  generate new Dial object from int
+]##
+proc newDial[I, int](s: array[I, int]): array[I, Dial]
+##[
+  generate new Dial object from array[int] (for `generateRange`)
+]##
+
+proc calc* (r: Range, d: Dial): int
+##[
+  get score of Dial from Range
+]##
+
+proc parsePacket* (pkt: string): (bool, JsonNode)
+##[
+  parse websocket message
+  ApiSend / ApiReceive are usable this proc
+]##
+
+
 proc calc* (r: Range, d: Dial): int =
   # calc point
   result =

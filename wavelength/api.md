@@ -216,21 +216,21 @@ sequenceDiagram
   S ->> B: 
   S ->> A: 
   Note over A, S: 準備OKの報告
-  A ->> S: Start
+  A ->> S: Status
   S ->> C: Users
   S ->> B: 
   S ->> A: 
-  Note over S: startを受信するたびに、全てのクライアントにusersの情報を共有
-  B ->> S: Start
+  Note over S: statusを受信するたびに、全てのクライアントにusersの情報を共有
+  B ->> S: Status
   S ->> C: Users
   S ->> B: 
   S ->> A: 
-  C ->> S: Start
+  C ->> S: Status
   S ->> C: Users
   S ->> B: 
   S ->> A: 
   Note over A, S: 揃ったらゲーム開始(ゲーム画面)
-  S ->> C: Start
+  S ->> C: Status
   S ->> B: 
   S ->> A: 
   Note over A, S: 親決定

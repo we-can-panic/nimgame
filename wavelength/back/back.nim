@@ -54,6 +54,7 @@ proc onRequest* (request: Request) {.async.} =
       var apiType = parseEnum[ApiSend](query["type"].getStr)
       case apiType:
       of Join:
+        # add the user to currentUsers / send currentUsers to all users
         user.name = query["name"].getStr
         if not user.isExists:
           regist(user)
@@ -65,13 +66,24 @@ proc onRequest* (request: Request) {.async.} =
           }
         sendAll($usersquery)
       of Id:
+        # send id to the user who sent the api
         let usersquery = %* {
           "type": $Id2,
           "id": user.id
         }
         user.send($usersquery)
       of Status:
-        discard
+        # change to sent status / send currentUsers to all users
+        if user.isExists:
+          let curUsersNum = currentUsers.mapIt(it.id).find(user.id)
+          currentUsers[curUsersNum].status = parseEnum[UserStatus](query["status"].getStr)
+        let
+          userlist = exportUsers()
+          usersquery = %* {
+            "type": $Users,
+            "users": userlist
+          }
+        sendAll($usersquery)
       of Dial1:
         discard
       of Dialed:

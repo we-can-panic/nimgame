@@ -78,7 +78,7 @@ type
       score range example:
         |--0--|--1--|--2--|--3--|--4--|--3--|--2--|--1--|--0--|
     ]##
-    pt1, pt2, pt3, pt4: array[0..1, Dial]
+    pt1*, pt2*, pt3*, pt4*: array[0..1, Dial]
 
   Dial* = range[1..100]
     ##[
@@ -96,7 +96,7 @@ proc generateRange* (): Range
     generate new Range object by suitable value
   ]##
 
-proc newDial(n: int): Dial
+proc newDial* (n: int): Dial
   ##[
     generate new Dial object from int
   ]##
@@ -145,10 +145,10 @@ proc newDial[I, int](s: array[I, int]): array[I, Dial] =
 proc generateRange* (): Range =
   let
     ini = rand(1..100)
-    pt1 = [ini, ini+5]
-    pt2 = [ini-5, ini+10]
-    pt3 = [ini-10, ini+15]
-    pt4 = [ini-15, ini+20]
+    pt4 = [ini, ini+5]
+    pt3 = [ini-5, ini+10]
+    pt2 = [ini-10, ini+15]
+    pt1 = [ini-15, ini+20]
   result = Range(pt1: newDial(pt1), pt2: newDial(pt2), pt3: newDial(pt3), pt4: newDial(pt4))
 
 proc parsePacket* (pkt: string): (bool, JsonNode) =

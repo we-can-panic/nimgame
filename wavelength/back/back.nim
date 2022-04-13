@@ -2,7 +2,7 @@
   WebSocketの処理
 ]#
 
-import json, strutils, sequtils
+import json, strutils, sequtils, sugar
 import jester, ws, ws/jester_extra
 
 import ../../general/logutils
@@ -11,6 +11,7 @@ import ../core/core
 type
   WSUser = ref object of User
     conn: WebSocket
+    dialed: bool
     ##[
       user of back
       user:
@@ -20,8 +21,12 @@ type
         room: Room
     ]##
 
-var currentUsers {.threadvar.} : seq[WSUser]
-## connecting users
+# global variables
+var
+  currentUsers {.threadvar.} : seq[WSUser]
+  ## connecting users
+  dial: Dial
+  ranges: Range
 
 proc newUser(ws: WebSocket): WSUser
 ## create new user from websocket
@@ -37,14 +42,20 @@ proc send(users: seq[WSUser], msg: string)
 ## send query to some users
 proc sendAll(msg: string)
 ## send query to all users
-
+proc save(user: WSUser)
+## save info to currentUsers
+proc syncUsers()
+## share the status all users
+proc addParam(user: var WSUser, query: JsonNode)
+## add name, status, room in query to user
+proc sendScore(users: seq[WSUser])
 
 proc onRequest* (request: Request) {.async.} =
   try:
     var ws = await newWebSocket(request)
     var user = newUser(ws)
     while ws.readyState == Open:
-      var
+      let
         msg = await ws.receiveStrPacket()
         (res, query) = parsePacket(msg)
 
@@ -55,23 +66,23 @@ proc onRequest* (request: Request) {.async.} =
       logInfo "GOT ", $query
 
       if not query.hasKey("type"):
-        loginfo "Invalid api format: " & $query
+        logInfo "Invalid api format: " & $query
         continue
 
-      var apiType = parseEnum[ApiSend](query["type"].getStr)
+      let apiType = block:
+        try:
+          parseEnum[ApiSend](query["type"].getStr)
+        except ValueError:
+          logInfo("Invalid ApiSend: ", query["type"].getStr)
+          return
+
       case apiType:
       of Join:
         # add the user to currentUsers / send currentUsers to all users
-        user.name = query["name"].getStr
+        user.addParam(query)
         if not user.isExists:
           regist(user)
-        let
-          userlist = exportUsers()
-          usersquery = %* {
-            "type": $Users,
-            "users": userlist
-          }
-        sendAll($usersquery)
+        syncUsers()
       of Id:
         # send id to the user who sent the api
         let usersquery = %* {
@@ -81,20 +92,27 @@ proc onRequest* (request: Request) {.async.} =
         user.send($usersquery)
       of Status:
         # change to sent status / send currentUsers to all users
+        user.addParam(query)
         if user.isExists:
-          let curUsersNum = currentUsers.mapIt(it.id).find(user.id)
-          currentUsers[curUsersNum].status = parseEnum[UserStatus](query["status"].getStr)
-        let
-          userlist = exportUsers()
-          usersquery = %* {
-            "type": $Users,
-            "users": userlist
-          }
-        sendAll($usersquery)
+          user.save()
+        # start game if all users are active.
+        if currentUsers.all(it => it.status==Active):
+          currentUsers.apply(proc(it: var WSUser) = it.room = Game)
+        syncUsers()
       of Dial1:
-        discard
+        if query.hasKey("value"):
+          dial = newDial(query["value"].getInt(1))
+        let usersquery = %* {
+          "type": $Dial2,
+          "value": dial
+        }
+        sendAll($usersquery)
       of Dialed:
-        discard
+        user.dialed = true
+        user.save()
+        if currentUsers.all(it => it.dialed):
+          currentUsers.sendScore()
+
 
   except JsonParsingError:
     logDebug "Json invalid: " & getCurrentExceptionMsg()
@@ -112,6 +130,9 @@ proc newUser(ws: WebSocket): WSUser =
   ## create new user from websocket
   result = WSUser()
   result.id = ws.key
+  result.status = Nil # init value
+  result.room = Nil2
+  result.dialed = false
   result.conn = ws
 
 proc isExists(user: WSUser): bool =
@@ -146,3 +167,55 @@ proc send(users: seq[WSUser], msg: string) =
 proc sendAll(msg: string) =
   ## semd query tp all users
   send(currentUsers, msg)
+
+
+proc save(user: WSUser) =
+  if user.isExists:
+    let curUsersNum = currentUsers.mapIt(it.id).find(user.id)
+    if user.name!="":
+      currentUsers[curUsersNum].name = user.name
+    if user.status!=Nil:
+      currentUsers[curUsersNum].status = user.status
+    if user.room!=Nil2:
+      currentUsers[curUsersNum].room = user.room
+
+proc syncUsers() =
+  let
+    userlist = exportUsers()
+    usersquery = %* {
+      "type": $Users,
+      "users": userlist
+    }
+  sendAll($usersquery)
+
+proc addParam(user: var WSUser, query: JsonNode) =
+  if query.hasKey("name"):
+    let name = query["name"].getStr
+    if name!="":
+      user.name = name
+  if query.hasKey("status"):
+    try:
+      user.status = parseEnum[UserStatus](query["status"].getStr)
+    except ValueError:
+      logInfo("Invalid status: ", query["status"].getStr)
+  if query.hasKey("room"):
+    try:
+      user.room = parseEnum[Room](query["room"].getStr)
+    except ValueError:
+      logInfo("Invalid room: ", query["room"].getStr)
+
+
+proc sendScore(users: seq[WSUser]) =
+  let query = %* {
+    "type": $Score,
+    "range": {
+      "1": ranges.pt1,
+      "2": ranges.pt2,
+      "3": ranges.pt3,
+      "4": ranges.pt4
+    },
+    "dial": {
+      "value": dial
+    }
+  }
+  users.send($query)

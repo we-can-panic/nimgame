@@ -9,9 +9,16 @@ import ../../general/logutils
 import ../core/core
 
 type
-  # 接続中のユーザー
   WSUser = ref object of User
     conn: WebSocket
+    ##[
+      user of back
+      user:
+        id: string
+        name: string
+        status: UserStatus
+        room: Room
+    ]##
 
 var currentUsers {.threadvar.} : seq[WSUser]
 ## connecting users

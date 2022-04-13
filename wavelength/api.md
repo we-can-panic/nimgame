@@ -226,11 +226,8 @@ sequenceDiagram
   S ->> B: 
   S ->> A: 
   C ->> S: Status
+  Note over A, S: 揃ったらゲーム開始(ゲーム画面; RoomをServer側で設定して送信)
   S ->> C: Users
-  S ->> B: 
-  S ->> A: 
-  Note over A, S: 揃ったらゲーム開始(ゲーム画面)
-  S ->> C: Status
   S ->> B: 
   S ->> A: 
   Note over A, S: 親決定

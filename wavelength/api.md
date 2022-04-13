@@ -235,7 +235,9 @@ sequenceDiagram
   S ->> B: 
   S ->> A: 
   S ->> B: Range
-  S ->> B: Theme
+  S ->> C: Theme
+  S ->> B:
+  S ->> A:
   Note over A, S: 親(B)が単語を共有、ディスカッションで目盛りを調整
   Note over A, S: 調整
   A ->> S: Dial

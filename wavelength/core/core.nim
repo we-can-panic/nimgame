@@ -35,9 +35,11 @@ type
       Kind of user's status for game start
       - Standby: 例えば、ユーザがそろっていない場合など
       - Active: 全ユーザーがこのステータスになったらゲーム開始
+      - Nil: 未決定
     ]##
     Standby
     Active
+    Nil
 
   Room* = enum
     ##[
@@ -45,10 +47,12 @@ type
       - Login: 名前決めなど
       - Wait: 他のユーザの待機中（Standby）
       - Game: ゲーム中
+      - Nil: 未決定
     ]##
     Login
     Wait
     Game
+    Nil2 = "Nil"
 
   User* = ref object of RootObj
     ##[

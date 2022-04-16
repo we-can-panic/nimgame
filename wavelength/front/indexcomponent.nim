@@ -24,6 +24,8 @@ var
 # utils procs
 proc send* (apitype: ApiSend, query: JsonNode = %* {})
 ## send to server
+proc pretty* (user: User): string
+## convert user: User -> JsonNode -> string
 
 # API
 proc sendJoin* ()
@@ -43,6 +45,15 @@ proc send(apitype: ApiSend, query: JsonNode) =
   typedQuery["type"] = %* $apitype
   logInfo "SEND " & $typedQuery
   ws.send($typedQuery)
+
+proc pretty* (user: User): string =
+  let js = %* {
+      "id": user.id,
+      "name": user.name,
+      "status": $user.status,
+      "room": $user.room
+    }
+  result = js.pretty()
 
 proc sendJoin() =
   ## send request Join

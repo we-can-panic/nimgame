@@ -3,17 +3,19 @@
 ]#
 
 import json, jsffi, strutils
+
 include karax/prelude
 import karax / [kdom, vdom, karax, karaxdsl, jstrutils, compact, localstorage, vstyles]
 import karax/jwebsockets
+
+import ../../general/logutils
 import ../core/core
 
 # WebSocket Part #
-const
-  test = true
-  url =
-    when test: "ws://localhost:5000/wavelength/ws"
-    else:      "ws://khc-nimgame.herokuapp.cpm/wavelength/ws"
+const url = block:
+        const test = true
+        when test: "ws://localhost:5000/wavelength/ws"
+        else:      "ws://khc-nimgame.herokuapp.cpm/wavelength/ws"
 
 var
   user = new User
@@ -21,17 +23,25 @@ var
   otherUsers: seq[User]
 
 ws.onmessage = proc(ev: MessageEvent) =
-  var (res, query) = parsePacket($ev.data)
+  let (res, query) = parsePacket($ev.data)
   if not res:
-    echo "jsonparseError"
+    logInfo "jsonparseError"
     return
-  if not query.hasKey("type"):
-    echo "Invalid api format: " & $query
-    return
-  echo "got: "
-  echo query
 
-  var apiType = parseEnum[ApiReceive](query["type"].getStr)
+  logInfo "GOT ", $query
+
+  if not query.hasKey("type"):
+    logInfo "Invalid api format: " & $query
+    return
+
+  let
+    apiType = block:
+      try:
+        parseEnum[ApiReceive](query["type"].getStr)
+      except ValueError:
+        logInfo("Invalid ApiReceive: ", query["type"].getStr)
+        return
+
   case apiType:
   of Users:
     discard
@@ -54,7 +64,6 @@ proc send(apitype: ApiSend, query: JsonNode) =
   var typedQuery = query
   typedQuery["type"] = %* $apitype
   ws.send($typedQuery)
-  echo "send: " & $typedQuery
 
 proc sendJoin() =
   ## send request Join
@@ -70,7 +79,7 @@ proc createHtml* (): VNode =
         text "NIMGAME"
     body:
       case user.room:
-      of Login:
+      of Login, Nil2:
         tdiv():
           h1: text "wavelength"
           h2: text "Login"

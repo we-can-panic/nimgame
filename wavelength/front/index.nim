@@ -10,17 +10,8 @@ import karax/jwebsockets
 
 import ../../general/logutils
 import ../core/core
+import indexcomponent
 
-# WebSocket Part #
-const url = block:
-        const test = true
-        when test: "ws://localhost:5000/wavelength/ws"
-        else:      "ws://khc-nimgame.herokuapp.cpm/wavelength/ws"
-
-var
-  user = new User
-  ws = newWebSocket(url)
-  otherUsers: seq[User]
 
 ws.onmessage = proc(ev: MessageEvent) =
   let (res, query) = parsePacket($ev.data)
@@ -59,16 +50,6 @@ ws.onmessage = proc(ev: MessageEvent) =
     discard
   of End:
     discard
-
-proc send(apitype: ApiSend, query: JsonNode) =
-  var typedQuery = query
-  typedQuery["type"] = %* $apitype
-  ws.send($typedQuery)
-
-proc sendJoin() =
-  ## send request Join
-  var name = $getElementById("login-input").value
-  send(Join, %* {"name": name})
 
 # HTML Part #
 proc createHtml* (): VNode =

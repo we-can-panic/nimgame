@@ -92,6 +92,7 @@ example
 | users.name | string | Y | users name (including myself) |
 | users.status | Standby \| Active | Y | status<br>- standby: 待機中<br>- active: 準備OK |
 | users.id | string | Y | identifier of user |
+| users.room | string | Y | users room |
 
 example
 ```

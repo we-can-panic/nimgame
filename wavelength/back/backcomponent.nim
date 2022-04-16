@@ -146,7 +146,8 @@ proc exportUsers(): seq[JsonNode] =
       result.add( %* {
         "name": user.name,
         "status": $user.status,
-        "id": user.id
+        "id": user.id,
+        "room": $user.room
       })
 
 proc searchUserFromId(id: string): WSUser =

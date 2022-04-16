@@ -25,7 +25,7 @@ type
   Board* = ref object
     dial* : Dial
     ranges* : Range
-    theme* : string
+    theme* : array[0..1, string]
     ##[
       board object
     ]##
@@ -35,7 +35,10 @@ var
   ## connecting users list
   hostUserId* : string
   ## host user's id
-  board* : Board
+  board* = Board(
+            dial: newDial(1),
+            ranges: generateRange(),
+            theme: ["", ""])
 
 
 # proc for make object
@@ -154,6 +157,7 @@ proc send(user: WSUser, msg: string) =
   ## send query to user
   let conn = user.conn
   if conn.readyState == Open:
+    logInfo "SEND " & msg
     asyncCheck conn.send(msg)
 
 proc send(users: seq[WSUser], msg: string) =
@@ -214,8 +218,10 @@ proc sendTheme() = # Todo
 
     theme = themes.sample
 
+
     query = %* {"type": $Theme, "theme1": theme[0], "theme2": theme[1]}
     host = searchUserFromId(hostUserId)
+  board.theme = [theme[0], theme[1]]
   host.send($query)
 
 proc sendDial() =

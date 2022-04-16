@@ -2,11 +2,13 @@
   back.nimで使用するAPIの処理など
 ]##
 
-import json, strutils, sequtils, sugar
+import json, strutils, sequtils, sugar, random, parsecsv
 import jester, ws, ws/jester_extra
 
 import ../../general/logutils
 import ../core/core
+
+randomize()
 
 type
   WSUser* = ref object of User
@@ -60,6 +62,8 @@ proc isExists* (user: WSUser): bool
 ## check `currentUsers` is including this user
 proc exportUsers* (): seq[JsonNode]
 ## List current users for Api `Users`
+proc searchUserFromId(id: string): WSUser
+## search from currentUsers
 
 # api core
 proc send* (user: WSUser, msg: string)
@@ -142,6 +146,10 @@ proc exportUsers(): seq[JsonNode] =
         "id": user.id
       })
 
+proc searchUserFromId(id: string): WSUser =
+  let idx = currentUsers.mapIt(it.id).find(id)
+  result = currentUsers[idx]
+
 proc send(user: WSUser, msg: string) =
   ## send query to user
   let conn = user.conn
@@ -174,13 +182,41 @@ proc sendUsers() =
   sendAll($usersquery)
 
 proc sendHost() = # Todo
-  discard
+  let
+    host = currentUsers.sample
+    query = %* {"type": $Host, "user": host.name}
+  hostUserId = host.id
+  sendAll($query)
 
 proc sendRange() = # Todo
-  discard
+  board.ranges = generateRange()
+  let
+    query = %* {
+      "type": $Range1,
+      "1": board.ranges.pt1,
+      "2": board.ranges.pt2,
+      "3": board.ranges.pt3,
+      "4": board.ranges.pt4
+    }
+    host = searchUserFromId(hostUserId)
+  host.send($query)
 
 proc sendTheme() = # Todo
-  discard
+  let
+    themes = block:
+      var p: CsvParser
+      defer: p.close()
+      p.open("themes.csv")
+      var res: seq[seq[string]]
+      while p.readRow():
+        res.add(p.row)
+      res
+
+    theme = themes.sample
+
+    query = %* {"type": $Theme, "theme1": theme[0], "theme2": theme[1]}
+    host = searchUserFromId(hostUserId)
+  host.send($query)
 
 proc sendDial() =
   let usersquery = %* {

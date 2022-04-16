@@ -101,7 +101,7 @@ proc newDial* (n: int): Dial
     generate new Dial object from int
   ]##
 
-proc newDial[I, int](s: array[I, int]): array[I, Dial]
+proc newDial* [I, int](s: array[I, int]): array[I, Dial]
   ##[
     generate new Dial object from array[int] (for `generateRange`)
   ]##
@@ -128,6 +128,7 @@ proc calc* (r: Range, d: Dial): int =
     else: 0
 
 proc newUser* (name: string, status=Standby, room=Wait): User =
+  result = User()
   result.name = name
   result.status = status
   result.room = room

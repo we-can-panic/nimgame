@@ -22,8 +22,9 @@ var
   otherUsers* : seq[User]
 
 # utils procs
-proc send* (apitype: ApiSend, query: JsonNode = %* {})
+proc send* {.deplecated.} (apitype: ApiSend, query: JsonNode = %* {})
 ## send to server
+proc send * (query: string)
 proc pretty* (user: User): string
 ## convert user: User -> JsonNode -> string
 
@@ -46,6 +47,10 @@ proc send(apitype: ApiSend, query: JsonNode) =
   logInfo "SEND " & $typedQuery
   ws.send($typedQuery)
 
+proc send(query: string) =
+  logInfo "SEND " & query
+  ws.send(query)
+
 proc pretty* (user: User): string =
   let js = %* {
       "id": user.id,
@@ -57,15 +62,27 @@ proc pretty* (user: User): string =
 
 proc sendJoin() =
   ## send request Join
-  var name = $getElementById("login-input").value
-  send(Join, %* {"name": name})
+  let
+    name = $getElementById("login-input").value
+    query = %* {
+      "type": $Join,
+      "name": name
+    }
+  send($query)
 
 proc sendId() =
-  discard
+  send($(%* {"type": $Id}))
 
 proc sendStatus() =
-  discard
+  let query = %* {"type": $Status, "status": $user.status}
+  send($query)
+
 proc sendDial() =
-  discard
+  let
+    id = "game-dial-input"
+    dial = $getElementById(id).value.parseInt
+    query = %* {"type": $Dial1, "value": dial}
+  send($query)
+
 proc sendDialed() =
-  discard
+  send($(%* {"type": $Dialed}))

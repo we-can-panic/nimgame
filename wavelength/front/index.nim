@@ -73,7 +73,7 @@ proc createHtml* (): VNode =
       of Wait:
         discard
       of Game:
-        discard
+        input(`type`="number", id="game-dial-input")
 
 
 setRenderer createHtml
